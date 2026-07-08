@@ -3,6 +3,8 @@ https://github.com/bhavya2-testing/90DaysOfDevOps/blob/6fe01f88a154e7f7c757ccc4c
 
 
 service commands - 
+https://github.com/bhavya2-testing/90DaysOfDevOps/blob/0729fec0fd9ff505746d7aa0cbed8fde8297721e/2026/day-04/systemctl%20list-units.png
+https://github.com/bhavya2-testing/90DaysOfDevOps/blob/0729fec0fd9ff505746d7aa0cbed8fde8297721e/2026/day-04/systemctl%20status%20command.png
 
 
 process commands - 
