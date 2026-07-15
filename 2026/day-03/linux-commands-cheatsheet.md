@@ -1,49 +1,43 @@
-Linux Command Cheat Sheet
-#######################File & Directory Management#########################
-Command	Usage
-pwd - Show the current working directory.
-ls -la - List all files with detailed information.
-cd <dir> - 	Change to another directory.
-mkdir <dir>	- Create a new directory.
-rmdir <dir>	- Remove an empty directory.
-rm -r <dir>	- Delete a directory and its contents.
-cp <src> <dest>	- Copy files or directories.
-mv <src> <dest>	- Move or rename a file/directory.
-find <path> -name "<file>" - Search for files by name.
+# Linux Commands Cheat Sheet
 
-##########################File Viewing & Editing############################
-Command	Usage
-cat <file>	- Display the contents of a file.
-less <file>	 - View large files one page at a time.
-head -n 10 <file>	- Show the first 10 lines of a file.
-tail -f <file> - Follow a log file in real time.
-nano <file>	- Edit a file using the Nano editor.
+## Process Management
 
-###########################Permissions & Ownership##########################
-Command	Usage
-chmod 755 <file>	Change file permissions.
-chown user:group <file>	Change file owner and group.
+- `ps aux` - Display all running processes.
+- `top` - Monitor processes in real time.
+- `kill -9 PID` - Force terminate a process.
+- `pkill process_name` - Kill process by name.
+- `pgrep process_name` - Find process IDs by name.
+- `systemctl status service` - Check service status.
+- `systemctl restart service` - Restart a service.
 
-###############################Process Management############################
-Command	Usage
-ps -ef	List all running processes.
-top	Monitor system processes interactively.
-kill <PID>	Terminate a process by PID.
+## File System
 
-###############################Disk & System Information#####################
-Command	Usage
-df -h	- Show disk usage in human-readable format.
-du -sh <dir>	- Show total size of a directory.
-free -h	- Display memory usage.
-uname -a -	Show Linux kernel and system information.
+- `pwd` - Show current working directory.
+- `find` - Search for files and directories.
+- `grep pattern file` - Search text in files.
+- `awk '{print $1}' file` - Extract specific columns.
+- `sed 's/old/new/' file` - Replace text in a file.
+- `cut -d':' -f1 file` - Extract fields from text.
+- `tail -f logfile.log` - Monitor logs in real time.
+- `wc -l file.txt` - Count lines in a file.
+- `ln source target` - Create a hard link.
+- `ln -s source target` - Create a symbolic link.
+- `rm -r directory` - Remove directory recursively.
+- `df -h` - Show disk usage.
+- `du -sh directory` - Show directory size.
 
-###############################Search & Text Processing########################
-Command	Usage
-grep "text" <file>	- Search for matching text in a file.
-wc -l <file>	- Count the number of lines in a file.
+## Networking Troubleshooting
 
-#################################Networking###################################
-Command	Usage
-ping google.com	 - Check network connectivity to a host.
-ip addr	- Display network interface IP addresses.
-curl https://example.com - 	Fetch data from a URL or test an API.
+- `ping google.com` - Check network connectivity.
+- `ip addr` - Display IP address information.
+- `curl https://google.com` - Test website response.
+- `dig google.com` - DNS lookup.
+- `ss -tulpn` - Show listening ports.
+- `hostnamectl` - Display hostname and OS information.
+
+## System Monitoring
+
+- `free -h` - Show memory usage.
+- `uptime` - Display system uptime.
+- `df -h | awk 'NR==2 {print $5}'` - Show disk usage percentage.
+- `free -h | awk 'NR==2 {print $3}'` - Show used memory.
