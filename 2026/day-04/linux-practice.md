@@ -6,4 +6,4 @@
 
 `hostnamectl` - Displays detailed hostname and system information.
 
-![hostnamectl](/02-hostnamectl.png)
+![hostnamectl](/01-hostnamectl.png)
