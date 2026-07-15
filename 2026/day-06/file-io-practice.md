@@ -1,4 +1,5 @@
-# 📁 Day 06 — Read & Write Text Files in Linux
+## Read & Write Text Files in Linux
+
 ---
 ## 🛠 Commands
 ### 1. Create a file — `echo` with `>`
