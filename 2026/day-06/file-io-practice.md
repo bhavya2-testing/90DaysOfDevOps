@@ -1,5 +1,4 @@
 ## Read & Write Text Files in Linux
-
 ---
 ## 🛠 Commands
 ### 1. Create a file — `echo` with `>`
