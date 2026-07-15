@@ -1,11 +1,4 @@
 # 📁 Day 06 — Read & Write Text Files in Linux
-
-> **Challenge:** 90DaysOfDevOps 2026 | **Author:** Vaibhav Godse
-> **Topic:** File I/O Operations — creating, writing, appending, reading files in Linux
----
-## Table of Contents
-- [Commands](#commands)
-- [Hands-On](#hands-on)
 ---
 ## 🛠 Commands
 ### 1. Create a file — `echo` with `>`
