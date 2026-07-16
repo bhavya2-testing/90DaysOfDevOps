@@ -70,7 +70,7 @@ journalctl -u docker --since "today" --no-pager
 ```bash
 ss -tulnp | grep 80
 ```
-> If another process already holds port 80, nginx cannot bind to it and fails to start. This command shows every listening port and which process owns it.
+> If another process already holds port 80, docker cannot bind to it and fails to start. This command shows every listening port and which process owns it.
 
 
 ### Step 5 — Start service and watch live
@@ -93,7 +93,9 @@ Your manager reports that the application server is slow.
 You SSH into the server. What commands would you run to identify
 which process is using high CPU?
 ```
-**Step-by-step solution:**
+## Step-by-step solution:
+
+#### Step 1 — Check service status
 
 ---
 
