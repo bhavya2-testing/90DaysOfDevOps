@@ -151,8 +151,7 @@ sudo mount /dev/devops-vg/app-data /mnt/app-data
 # Verify
 df -h /mnt/app-data
 
-# Verify
-lsblk
+
 ```
 
 <img width="562" height="577" alt="06_mountlv" src="https://github.com/user-attachments/assets/85ec4342-ac4e-4e33-9e8f-a5ea4b6db519" />
@@ -163,8 +162,21 @@ lsblk
 
 **Test file creation:**
 ```bash
-touch /mnt/app-data/testfile
-ls /mnt/app-data
+# Create file with text
+vi /mnt/app-data/testfile.txt
+
+# Display file cotent
+cat /mnt/app-data/testfile.txt
+
+#Unmount the LV
+sudo unmount /mnt/app-data
+
+#Remount the LV
+sudo mount /dev/devops-vg/app-data /mnt/app-data
+
+## Display file cotents again (Data is still available,unmounting will not cause data loss )
+cat /mnt/app-data/testfile.txt
+
 ```
 
 
@@ -172,13 +184,74 @@ ls /mnt/app-data
 
 ---
 ### Task 6: Extend the Volume
+Grow the Logical Volume by 200MB (500M → 700M) without unmounting.
+
+**Commands:**
 ```bash
-lvextend -L +200M /dev/devops-vg/app-data
-resize2fs /dev/devops-vg/app-data
+# Extend the LV by 200MB
+sudo lvextend -L +200M /dev/devops-vg/app-data
+
+# Resize the filesystem to fill the new LV size
+sudo resize2fs /dev/devops-vg/app-data
+
+# Verify the new size
 df -h /mnt/app-data
 ```
 
+<img width="600" height="189" alt="08-lv-extend" src="https://github.com/user-attachments/assets/2ccb493a-3d0d-497a-93d5-0170e1fb732a" />
+
+**Output:**
+
+> `lvextend` grows the LV, but the filesystem still sees the old size. `resize2fs` is required to expand the filesystem to fill the newly available space — all while mounted and live.
+
+
 ---
-What I learned
+## LVM Flow Summary
+
+```
+dd + losetup          →   /dev/loop2         (simulated physical disk)
+pvcreate /dev/loop2   →   PV: /dev/loop2     (disk registered with LVM)
+vgcreate devops-vg    →   VG: devops-vg      (storage pool ~1G)
+lvcreate -L 500M      →   LV: app-data       (virtual partition 500M)
+mkfs.ext4 + mount     →   /mnt/app-data      (usable filesystem)
+lvextend + resize2fs  →   LV: app-data 700M  (live resize, no downtime)
+```
+
+---
+
+## Commands Used
+
+| Command | Description |
+|---|---|
+| `dd if=/dev/zero of=<file> bs=1M count=1024` | Create a blank 1GB disk image |
+| `losetup -fP <image>` | Attach disk image as a loop device |
+| `losetup -a` | List all active loop devices |
+| `lsblk` | Show all block devices and their sizes |
+| `pvs` / `vgs` / `lvs` | Show Physical Volumes, Volume Groups, Logical Volumes |
+| `pvcreate <device>` | Mark a device as an LVM Physical Volume |
+| `vgcreate <vg-name> <device>` | Create a Volume Group from a PV |
+| `lvcreate -L <size> -n <name> <vg>` | Create a Logical Volume inside a VG |
+| `mkfs.ext4 <lv-path>` | Format the LV with an ext4 filesystem |
+| `mkdir -p <path>` | Create the mount point directory |
+| `mount <lv-path> <mount-point>` | Mount the LV to a directory |
+| `df -h` | Show filesystem sizes and usage |
+| `lvextend -L +<size> <lv-path>` | Extend a Logical Volume |
+| `resize2fs <lv-path>` | Resize ext4 filesystem to fill extended LV |
+
+---
+
+## What I Learned
+
+1. **PV → VG → LV abstraction:** LVM separates physical storage from logical storage. This means you can resize, add disks, or move data without touching partitions directly — a huge advantage over traditional partitioning.
+
+2. **Loopback disks for practice:** Using `dd` and `losetup` lets you simulate real physical disks entirely in software — perfect for learning LVM concepts in WSL or any environment without spare hardware.
+
+3. **Live volume extension:** `lvextend` + `resize2fs` allows to grow a mounted filesystem without any downtime or unmounting. This is a critical real-world skill for scaling storage on production servers when disk space runs low.
+
+---
+
+## Why This Matters for DevOps
+
+LVM is widely used in production Linux servers to manage storage flexibly. When a database volume or application log directory fills up, LVM lets you extend it instantly without restarting services. Understanding PVs, VGs, and LVs is essential for provisioning EC2 volumes on AWS, managing Kubernetes persistent storage, and building resilient infrastructure that can scale storage on demand
 
 ---
