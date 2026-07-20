@@ -151,21 +151,197 @@ tmpfs           5.0M     0  5.0M   0% /run/lock
 
 ### 5. Network snapshot
 #### Command #1 – Listening ports and service status
-`sudo ss -tulpn | grep ssh`
+- # `sudo ss -tulpn | grep ssh`
 
-- Purpose : Confirms sshd is listening on expected port (usually 22) and no port conflict
+Displays SSH-related listening sockets and the process using them.
+
+## Syntax
+
+```bash
+sudo ss -tulpn | grep ssh
+```
+
+## Command Breakdown
+
+| Component | Description |
+|-----------|-------------|
+| `sudo` | Runs the command with administrative privileges to view all processes. |
+| `ss` | Displays socket statistics (replacement for `netstat`). |
+| `-t` | Show TCP sockets. |
+| `-u` | Show UDP sockets. |
+| `-l` | Display only listening sockets. |
+| `-p` | Show the process (PID/program name) using each socket. |
+| `-n` | Display numeric addresses and port numbers instead of resolving names. |
+| `grep ssh` | Filter the output to show only SSH-related entries. |
+
+## Example Output
+
+```bash
+tcp   LISTEN 0      128          0.0.0.0:22         0.0.0.0:*      users:(("sshd",pid=1023,fd=3))
+tcp   LISTEN 0      128             [::]:22            [::]:*      users:(("sshd",pid=1023,fd=4))
+```
+
+## Output Fields
+
+| Field | Description |
+|-------|-------------|
+| `tcp` | Protocol being used (TCP). |
+| `LISTEN` | Socket state indicating the service is waiting for incoming connections. |
+| `0` | Number of queued received packets. |
+| `128` | Maximum connection backlog (queue size). |
+| `0.0.0.0:22` | Listening on all IPv4 interfaces on port 22. |
+| `[::]:22` | Listening on all IPv6 interfaces on port 22. |
+| `users:(("sshd",pid=1023,fd=3))` | Process name, Process ID (PID), and file descriptor using the socket. |
+
+## Commonly Used `ss` Options
+
+| Option | Description |
+|--------|-------------|
+| `-t` | Show TCP sockets only. |
+| `-u` | Show UDP sockets only. |
+| `-l` | Display only listening sockets. |
+| `-a` | Display all sockets (listening and non-listening). |
+| `-p` | Show the process using each socket. |
+| `-n` | Show numeric IP addresses and port numbers. |
+| `-s` | Display socket statistics summary. |
+| `-4` | Show IPv4 sockets only. |
+| `-6` | Show IPv6 sockets only. |
+
+
 
 #### Command #2 – Connectivity check
-`curl -v telnet://localhost:22`
+# `curl -v telnet://localhost:22`
 
-- Purpose : Checks if port 22 is open.
+Tests TCP connectivity to port **22** (SSH) on the local machine using `curl`'s Telnet protocol support. The `-v` option enables verbose output, allowing you to verify whether the SSH port is reachable.
+
+> **Note:** This command **does not establish an SSH session**. It only checks whether a TCP connection to the SSH port can be made.
+
+## Syntax
+
+```bash
+curl -v telnet://localhost:22
+```
+
+## Command Breakdown
+
+| Component | Description |
+|-----------|-------------|
+| `curl` | Command-line tool for transferring data using various protocols. |
+| `-v` | Enables verbose output, showing connection details and protocol negotiation. |
+| `telnet://` | Uses the Telnet protocol handler to open a raw TCP connection. |
+| `localhost` | Connects to the local machine (`127.0.0.1`). |
+| `:22` | Specifies port **22**, the default SSH port. |
+
+## Example Output
+
+```bash
+* Trying 127.0.0.1:22...
+* Connected to localhost (127.0.0.1) port 22 (#0)
+SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.8
+```
+
+## Output Fields
+
+| Output | Description |
+|--------|-------------|
+| `Trying 127.0.0.1:22...` | Attempts to connect to the SSH port. |
+| `Connected to localhost` | TCP connection was established successfully. |
+| `SSH-2.0-OpenSSH_...` | SSH server banner indicating the SSH service is running. |
+
+## Common `curl` Options
+
+| Option | Description |
+|--------|-------------|
+| `-v` | Enable verbose output. |
+| `-I` | Fetch HTTP headers only. |
+| `-O` | Save the file using its remote filename. |
+| `-o <file>` | Save output to a specified file. |
+| `-L` | Follow HTTP redirects. |
+| `-k` | Ignore SSL/TLS certificate validation. |
+| `-u user:password` | Authenticate using a username and password. |
+| `--connect-timeout <seconds>` | Set the connection timeout. |
+
   
 ### 5. Logs reviewed
 
 ### Command #1 - Recent service logs via journalctl
-`journalctl -u ssh -n 50` OR `journalctl -u sshd -n 50`
+# `journalctl -u ssh -n 50` / `journalctl -u sshd -n 50`
 
-- Purpose: Shows recent restarts, failures, auth issues, or configuration errors.
+Displays the **last 50 log entries** for the SSH service using `systemd` journal logs.
+
+The service name depends on the Linux distribution:
+
+- Debian/Ubuntu commonly use: `ssh`
+- RHEL/CentOS/Fedora commonly use: `sshd`
+
+## Syntax
+
+```bash
+journalctl -u <service-name> -n 50
+```
+
+Examples:
+
+```bash
+journalctl -u ssh -n 50
+```
+
+or
+
+```bash
+journalctl -u sshd -n 50
+```
+
+---
+
+## Command Breakdown
+
+| Component | Description |
+|-----------|-------------|
+| `journalctl` | Command used to query and display logs collected by `systemd-journald`. |
+| `-u` | Filters logs for a specific systemd unit/service. |
+| `ssh` / `sshd` | The SSH service unit name. |
+| `-n 50` | Displays the latest 50 log entries. |
+
+---
+
+## Example Output
+
+```bash
+Mar 20 10:15:01 server sshd[1023]: Server listening on 0.0.0.0 port 22.
+Mar 20 10:16:45 server sshd[2045]: Accepted password for user1 from 192.168.1.10 port 54321 ssh2
+Mar 20 10:17:02 server sshd[2045]: pam_unix(sshd:session): session opened for user user1
+```
+
+---
+
+## Output Fields
+
+| Field | Description |
+|-------|-------------|
+| Timestamp | Date and time when the event occurred. |
+| Hostname | Name of the server generating the log. |
+| Service | Service generating the message (`sshd`). |
+| PID | Process ID of the SSH daemon instance. |
+| Message | Log event details (login, error, connection, etc.). |
+
+---
+
+## Commonly Used `journalctl` Options
+
+| Option | Description | Example |
+|--------|-------------|---------|
+| `-u <service>` | Show logs for a specific service | `journalctl -u sshd` |
+| `-n <number>` | Show the latest N log lines | `journalctl -n 100` |
+| `-f` | Follow logs in real time | `journalctl -f` |
+| `-b` | Show logs from current boot | `journalctl -b` |
+| `-p <level>` | Filter by priority | `journalctl -p err` |
+| `--since` | Show logs after a specific time | `journalctl --since "1 hour ago"` |
+| `--until` | Show logs before a specific time | `journalctl --until "today"` |
+| `--no-pager` | Display output directly without a pager | `journalctl --no-pager` |
+| `-xe` | Show recent errors with explanations | `journalctl -xe` |
+
+---
 
 ### Command #2 – Log file tail
 `tail -n 50 /var/log/auth.log`
