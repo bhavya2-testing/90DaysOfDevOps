@@ -23,14 +23,14 @@ Reason: Core remote access service; easy to validate via network and logs.
 | Hardware platform | `x86_64`                             | Hardware platform (may be `unknown` on some systems) |
 | Operating system  | `GNU/Linux`                          | Operating system name                                |
 
-uname -s – Kernel name
-uname -n – Hostname
-uname -r – Kernel release
-uname -v – Kernel version
-uname -m – Machine architecture
-uname -p – Processor type
-uname -i – Hardware platform
-uname -o – Operating system
+- uname -s – Kernel name
+- uname -n – Hostname
+- uname -r – Kernel release
+- uname -v – Kernel version
+- uname -m – Machine architecture
+- uname -p – Processor type
+- uname -i – Hardware platform
+- uname -o – Operating system
 
 #### Command #2 - OS Version
 `cat /etc/os-release`
